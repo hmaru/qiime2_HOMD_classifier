@@ -64,7 +64,7 @@ qiime feature-classifier extract-reads \
 
 ## 📌 Notes
 
-- Applying length filters led to underrepresentation of Fusobacterium species.
+- Applying length filters when using V3-V4 led to underrepresentation of Fusobacterium species, so no lenght limit is applied.
 - Make sure taxonomy file is in QIIME2-compatible format (`HeaderlessTSVTaxonomyFormat`).
 
 ---
