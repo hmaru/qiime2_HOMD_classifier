@@ -1,2 +1,2 @@
 # qiime2_HOMD_classifier
-Qiime2 feature classidier made with HOMD database
+How to make Qiime2 feature classifier with HOMD database
