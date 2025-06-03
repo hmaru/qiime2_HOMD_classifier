@@ -1,2 +1,3 @@
-# making qiime2 feature-classifier with eHOMD database
-This repository stores commands and input data to make a feature classifier in  specific qiime2 version. 
+# 🧬 QIIME2 Feature Classifier Training with eHOMD
+
+This repository documents the process of training and evaluating a Naive Bayes classifier using the expanded Human Oral Microbiome Database (eHOMD) 16S rRNA reference data with QIIME2.
