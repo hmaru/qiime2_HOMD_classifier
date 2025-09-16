@@ -115,6 +115,11 @@ qiime metadata tabulate \
 ## error during classifier training, but it did cause the `qiime taxa barplot`
 ## command to fail.
 ##
+## The error message was as follows:
+###  File "/opt/conda/envs/qiime2-amplicon-2025.7/lib/python3.10/site-packages/q2_taxa/_util.py", line 11, in <lambda>
+###    return taxonomy.apply(lambda x: len(x.split(';'))).max()
+### AttributeError: 'float' object has no attribute 'split'
+##
 ## The commands below serve as a validation check to ensure this issue has been
 ## resolved in the current HOMD version (v16.03). If these commands execute
 ## successfully, it confirms the classifier and taxonomy file are well-formed.
@@ -122,22 +127,17 @@ qiime metadata tabulate \
 
 # 1. Test the FULL-LENGTH classifier
 # -----------------------------------------------------------------------------
-echo "Attempting to create bar plot with full-length classifier..."
 qiime taxa barplot \
   --i-table test_data/table.qza \
   --i-taxonomy test_output/taxonomy_full.qza \
-  --o-visualization test_output/barplot_full.qzv && \
-echo "Success: Full-length classifier passed the validation check."
-
+  --o-visualization test_output/barplot_full.qzv \
 
 # 2. Test the V3-V4 classifier
 # -----------------------------------------------------------------------------
-echo "Attempting to create bar plot with V3-V4 classifier..."
 qiime taxa barplot \
   --i-table test_data/table.qza \
   --i-taxonomy test_output/taxonomy_V3-V4.qza \
-  --o-visualization test_output/barplot_V3-V4.qzv && \
-echo "Success: V3-V4 classifier passed the validation check."
+  --o-visualization test_output/barplot_V3-V4.qzv \
 
 ## =============================================================================
 ## NOTES
