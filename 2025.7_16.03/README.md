@@ -4,9 +4,9 @@ This repository documents the process of training and evaluating a Naive Bayes c
 
 ## 🔧 Versions
 
-- **QIIME2**: 2025.4  
-- **eHOMD RefSeq**: Version 16.01 (released 2025/04/25)  
-- **HOMD Taxonomy**: Version 4.0 (released 2025/04/25)
+- **QIIME2**: 2025.7  
+- **eHOMD RefSeq**: Version 16.03 (released 2025/08/25)  
+- **HOMD Taxonomy**: Version 4.1 (released 2025/08/25)
 
 ---
 
