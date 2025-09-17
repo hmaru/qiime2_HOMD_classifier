@@ -1,60 +1,69 @@
-# Script to train a QIIME2 feature classifier using the HOMD database
+#!/bin/bash
+set -e # Exit immediately if a command exits with a non-zero status.
 
-## =============================================================================
-## METADATA
-## =============================================================================
-## QIIME2 Version: 2025.7
-## eHOMD RefSeq Version: 16.03 (released on 2025/08/25)
-## HOMD Taxonomy Version: V4.1 (released on 2025/08/25) 
+# Script to train and validate QIIME2 feature classifiers using the eHOMD database
 
-## =============================================================================
-## SETUP
-## =============================================================================
+# =============================================================================
+# METADATA
+# =============================================================================
+# QIIME2 Version: 2025.7
+# eHOMD RefSeq Version: 16.03 (released on 2025/08/25)
+# HOMD Taxonomy Version: V4.1 (released on 2025/08/25) 
 
-# 1. Download required files from the HOMD website
+# =============================================================================
+# SETUP: Prepare Environment and Data
+# =============================================================================
+
+# Step 1: Download required files from the HOMD website
 # -----------------------------------------------------------------------------
-### Download "eHOMD 16S rRNA Refseq Version 16.03" -> HOMD_16S_rRNA_RefSeq_V16.03_full.fasta
-### Download "eHOMD 16S rRNA Refseq Version 16.03 Taxonomy file for QIIME" -> HOMD_16S_rRNA_RefSeq_V16.03.qiime.taxonomy
+# PURPOSE: Obtain the latest reference sequences and taxonomy files.
+# ACTIONS:
+#   - Download "eHOMD 16S rRNA Refseq Version 16.03" -> e.g., HOMD_16S_rRNA_RefSeq_V16.03_full.fasta
+#   - Download "eHOMD 16S rRNA Refseq Version 16.03 Taxonomy file for QIIME" -> e.g., HOMD_16S_rRNA_RefSeq_V16.03.qiime.taxonomy
 
-# 2. Activate QIIME2 environment
+# Step 2: Activate QIIME2 environment
 # -----------------------------------------------------------------------------
-### Using Docker
-docker run --rm -it -v "$(pwd):/data" quay.io/qiime2/amplicon:2025.7
+# PURPOSE: Load the necessary QIIME2 software environment.
+# NOTE: Choose the appropriate command for your setup (Docker or Conda).
+#
+# Using Docker:
+# docker run --rm -it -v "$(pwd):/data" quay.io/qiime2/amplicon:2025.7
+#
+# Using Conda:
+# conda activate qiime2-amplicon-2025.7
 
-### Using Conda
-# conda activate qiime2-2025.7
+# If you encounter a 'ValueError: unknown locale: UTF-8', run this before starting QIIME2:
+# export LC_ALL=en_US.UTF-8
 
-#### Note: If you encounter a 'ValueError: unknown locale: UTF-8' error, run the following command:
-# export LC_ALL=en_US.UTF-8 # Or your preferred locale, e.g., ja_JP.UTF-8
-
-# 3. Import data into QIIME2 artifacts
+# Step 3: Import data into QIIME2 artifacts
 # -----------------------------------------------------------------------------
-### Import reference sequences (full-length)
+# PURPOSE: Convert the raw text files (.fasta, .taxonomy) into QIIME2's native format (.qza).
 qiime tools import \
   --type 'FeatureData[Sequence]' \
   --input-path HOMD_download/HOMD_16S_rRNA_RefSeq_V16.03_full.fasta \
   --output-path HOMD_16.03_full.qza
 
-### Import taxonomy file
 qiime tools import \
   --type 'FeatureData[Taxonomy]' \
   --input-format HeaderlessTSVTaxonomyFormat \
   --input-path HOMD_download/HOMD_16S_rRNA_RefSeq_V16.03.qiime.taxonomy \
   --output-path HOMD_16.03-taxonomy.qza
 
-## =============================================================================
-## OPTION 1: Train classifier using FULL-LENGTH reference sequences
-## =============================================================================
+# =============================================================================
+# WORKFLOW 1: Train and Test FULL-LENGTH Classifier
+# =============================================================================
 
-# 1. Train the Naive Bayes classifier
+# Step 1.1: Train the Naive Bayes classifier
 # -----------------------------------------------------------------------------
+# PURPOSE: Build the classifier using the complete, full-length 16S reference sequences.
 qiime feature-classifier fit-classifier-naive-bayes \
   --i-reference-reads HOMD_16.03_full.qza \
   --i-reference-taxonomy HOMD_16.03-taxonomy.qza \
   --o-classifier classifier/classifier_HOMD-16.03_full.qza
 
-# 2. Test the full-length classifier
+# Step 1.2: Test the classifier
 # -----------------------------------------------------------------------------
+# PURPOSE: Use the trained classifier to assign taxonomy to a set of test sequences.
 qiime feature-classifier classify-sklearn \
   --i-classifier classifier/classifier_HOMD-16.03_full.qza \
   --i-reads test_data/rep-seqs.qza \
@@ -64,12 +73,14 @@ qiime metadata tabulate \
   --m-input-file test_output/taxonomy_full.qza \
   --o-visualization test_output/taxonomy_full.qzv
 
-## =============================================================================
-## OPTION 2: Train classifier using the V3-V4 REGION
-## =============================================================================
+# =============================================================================
+# WORKFLOW 2: Train and Test V3-V4 REGION Classifier
+# =============================================================================
 
-# 1. Extract the V3-V4 region from reference sequences
+# Step 2.1: Extract the V3-V4 region from reference sequences
 # -----------------------------------------------------------------------------
+# PURPOSE: Simulate PCR amplification of the V3-V4 region to create a region-specific reference.
+
 ### These are the full-length primers used for the initial 16S PCR amplification for MiSeq library preparation.
 ###  --p-f-primer TCGTCGGCAGCGTCAGATGTGTATAAGAGACAGCCTACGGGNGGCWGCAG
 ###  --p-r-primer GTCTCGTGGGCTCGGAGATGTGTATAAGAGACAGGGACTACHVGGGTWTCTAAT
@@ -77,9 +88,9 @@ qiime metadata tabulate \
 ### The biological primer sequences below were identified by running a BLASTN search
 ### against a 16S rRNA database using the 3' half of the full-length primers shown above.
 ###
-### NOTE: Length filtering is disabled (`--p-min-length 0` and `--p-max-length 0`) because applying
-### a specific length range was found to cause underrepresentation of *Fusobacterium* species
-### in the resulting classifier. (Comparative data for this finding is not included here).
+# NOTE: Length filtering is disabled (--p-min-length 0, --p-max-length 0) because applying
+# a specific length range was found to cause underrepresentation of *Fusobacterium* species
+# in the resulting classifier.
 qiime feature-classifier extract-reads \
   --i-sequences HOMD_16.03_full.qza \
   --p-f-primer CCTACGGGNGGCWGCAG \
@@ -88,15 +99,17 @@ qiime feature-classifier extract-reads \
   --p-max-length 0 \
   --o-reads HOMD_16.03_V3-V4.qza
 
-# 2. Train the classifier on the extracted V3-V4 reads
+# Step 2.2: Train the classifier on the extracted V3-V4 reads
 # -----------------------------------------------------------------------------
+# PURPOSE: Build the classifier using only the V3-V4 reference sequences.
 qiime feature-classifier fit-classifier-naive-bayes \
   --i-reference-reads HOMD_16.03_V3-V4.qza \
   --i-reference-taxonomy HOMD_16.03-taxonomy.qza \
   --o-classifier classifier/classifier_HOMD-16.03_V3-V4.qza
 
-# 3. Test the V3-V4 classifier
+# Step 2.3: Test the V3-V4 classifier
 # -----------------------------------------------------------------------------
+# PURPOSE: Use the V3-V4 classifier to assign taxonomy to the test sequences.
 qiime feature-classifier classify-sklearn \
   --i-classifier classifier/classifier_HOMD-16.03_V3-V4.qza \
   --i-reads test_data/rep-seqs.qza \
@@ -106,48 +119,22 @@ qiime metadata tabulate \
   --m-input-file test_output/taxonomy_V3-V4.qza \
   --o-visualization test_output/taxonomy_V3-V4.qzv
 
-## =============================================================================
-## VALIDATION STEP: Test classifier functionality with bar plots
-## =============================================================================
-## NOTE (Historical Context):
-## Previous versions of the HOMD taxonomy file (e.g., v16.01, around 2025/06/01)
-## contained empty taxonomy strings for some entries. This did not cause an
-## error during classifier training, but it did cause the `qiime taxa barplot`
-## command to fail.
-##
-## The error message was as follows:
-###  File "/opt/conda/envs/qiime2-amplicon-2025.7/lib/python3.10/site-packages/q2_taxa/_util.py", line 11, in <lambda>
-###    return taxonomy.apply(lambda x: len(x.split(';'))).max()
-### AttributeError: 'float' object has no attribute 'split'
-##
-## The commands below serve as a validation check to ensure this issue has been
-## resolved in the current HOMD version (v16.03). If these commands execute
-## successfully, it confirms the classifier and taxonomy file are well-formed.
-## =============================================================================
-
-# 1. Test the FULL-LENGTH classifier
+# =============================================================================
+# VALIDATION: Ensure Bar Plots Can Be Generated
+# =============================================================================
+# PURPOSE: This step serves as a sanity check. Previous versions of the HOMD
+# taxonomy file had formatting issues that caused `qiime taxa barplot` to fail.
+# Successful execution of these commands confirms the current taxonomy file is
+# correctly formatted and the classifier is compatible with downstream visualization.
 # -----------------------------------------------------------------------------
 qiime taxa barplot \
   --i-table test_data/table.qza \
   --i-taxonomy test_output/taxonomy_full.qza \
-  --o-visualization test_output/barplot_full.qzv \
+  --o-visualization test_output/barplot_full.qzv
 
-# 2. Test the V3-V4 classifier
-# -----------------------------------------------------------------------------
 qiime taxa barplot \
   --i-table test_data/table.qza \
   --i-taxonomy test_output/taxonomy_V3-V4.qza \
-  --o-visualization test_output/barplot_V3-V4.qzv \
+  --o-visualization test_output/barplot_V3-V4.qzv
 
-## =============================================================================
-## NOTES
-## =============================================================================
-## - The classifier trained on the V3-V4 region generally yields slightly higher
-##   classification confidence than the full-length classifier.
-##
-## - However, for certain taxa, such as some *Porphyromonas* species, the
-##   full-length classifier may provide higher confidence classifications.
-##
-## - As mentioned above, length filtering is disabled during V3-V4 extraction to
-##   prevent the underrepresentation of *Fusobacterium* species. This behavior
-##   may require further investigation.
+echo "Script finished successfully."
