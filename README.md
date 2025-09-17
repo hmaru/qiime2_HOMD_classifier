@@ -46,14 +46,14 @@ cd qiime2_HOMD_classifier
 
 * **QIIME 2**: This classifier was built using QIIME 2. We recommend using a version of the `qiime2/amplicon` distribution released in 2025 or later.
 
-## Citation ✍️
+## ✍️ Citation
 
-To ensure reproducibility, please download the classifier from the **[Releases Page](https://github.com/hmaru/qiime2_HOMD_classifier/releases)** and make a note of the specific version you used for your analysis.
+The official classifiers are distributed through the **[Releases Page](https://github.com/hmaru/qiime2_HOMD_classifier/releases)**. To ensure reproducibility, please cite the specific **release version** you downloaded for your analysis.
 
-We kindly ask that you cite this repository in the methods section of your publication.
+We kindly ask that you mention this in the **methods section** of your publication.
 
 **For example:**
-> "Taxonomic classification was performed using the QIIME 2 feature-classifier plugin with a pre-trained classifier (version `v2025.7-16.03`) from the qiime2_eHOMD_classifier repository (https://github.com/hmaru/qiime2_HOMD_classifier)."
+> "Taxonomic classification was performed using the QIIME 2 feature-classifier plugin with a pre-trained classifier (version `v2025.7-16.03`), downloaded from the qiime2_eHOMD_classifier repository (https://github.com/hmaru/qiime2_HOMD_classifier)."
 
 Please also include the original publications for eHOMD and QIIME 2 in your references:
 
