@@ -19,7 +19,7 @@
 # 2. Activate QIIME2 environment
 # -----------------------------------------------------------------------------
 ### Using Docker
-# docker run --rm -it -v "$(pwd):/data" quay.io/qiime2/amplicon:2025.7
+docker run --rm -it -v "$(pwd):/data" quay.io/qiime2/amplicon:2025.7
 
 ### Using Conda
 # conda activate qiime2-2025.7
