@@ -48,12 +48,14 @@ cd qiime2_HOMD_classifier
 
 ## Citation ✍️
 
-To ensure reproducibility, please download the classifier from the **[Releases Page](https://github.com/hmaru/qiime2_HOMD_classifier/releases)** and cite the specific version you used in your analysis.
+To ensure reproducibility, please download the classifier from the **[Releases Page](https://github.com/hmaru/qiime2_HOMD_classifier/releases)** and make a note of the specific version you used for your analysis.
 
-In addition to citing the specific release, we kindly ask you to also cite the original publications for eHOMD and QIIME 2.
+We kindly ask that you cite this repository in the methods section of your publication.
 
-* **This Repository (Example for version v1.0.0)**:
-    `Maruyama H`. (2025). *qiime2_HOMD_classifier: QIIME 2 Classifiers for the eHOMD (Version v1.0.0)* [Computer software]. GitHub. https://github.com/hmaru/qiime2_HOMD_classifier/releases/tag/v1.0.0
+**For example:**
+> "Taxonomic classification was performed using the QIIME 2 feature-classifier plugin with a pre-trained classifier (version `v2025.7-16.03`) from the qiime2_eHOMD_classifier repository (https://github.com/hmaru/qiime2_HOMD_classifier)."
+
+Please also include the original publications for eHOMD and QIIME 2 in your references:
 
 * **eHOMD**: Fernández-Escapa I, Chen T, Huang Y, Gajare P, Dewhirst FE, Lemon KP. (2018). New insights into the human nostril microbiome from the expanded Human Oral Microbiome Database (eHOMD): a resource for species-level identification of microbiome data from the aerodigestive tract. mSystems 3:e00187-18. https://doi.org/10.1128/mSystems.00187-18.
 
