@@ -9,6 +9,7 @@ This is a list of potential improvements and tasks for this project.
 
 ### Documentation
 - [ ] **Refine Citation Text**: Add the word "exclusively" to the citation instructions in the `README.md` to clarify that classifiers are only distributed via the Releases page.
+- [ ] **Refine cloning instruction**: Add user instruction how to clone only specific subdirectories. 
 
 ### Classifier Validation
 - [ ] **Run Cross-Validation**: Perform cross-validation analysis (`qiime feature-classifier evaluate-cross-validate`) on the trained classifiers to formally evaluate their performance.
